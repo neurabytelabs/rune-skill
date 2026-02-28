@@ -69,3 +69,8 @@ Built on Spinoza's philosophical framework by NeuraByte Labs.
 ## Author
 
 [Mustafa Saraç](https://mustafasarac.com) · [NeuraByte Labs](https://neurabytelabs.com)
+
+## Related
+
+- **RUNE Framework** → [github.com/neurabytelabs/rune](https://github.com/neurabytelabs/rune) — Core engine, wand.py, full docs
+- **RUNE Playground** → [github.com/neurabytelabs/rune-playground](https://github.com/neurabytelabs/rune-playground) — Browser demo
