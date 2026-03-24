@@ -1,7 +1,7 @@
 {
   "name": "rune-skill",
-  "version": "1.0.0",
-  "description": "RUNE Prompt Amplification Framework — wraps any prompt in an 8-layer semantic engine for dramatically better AI responses",
+  "version": "2.0.0",
+  "description": "RUNE Prompt Amplification Framework v2.0 — 8-layer semantic engine with Spinoza Validator, 40+ grimoire templates, and multi-agent swarm mode for dramatically better AI responses",
   "author": "NeuraByte Labs <mustafa@neurabytelabs.com>",
   "license": "MIT",
   "main": "main.sh",
@@ -13,7 +13,9 @@
     "skill",
     "prompt-amplification",
     "wand",
-    "spinoza"
+    "spinoza",
+    "grimoire",
+    "swarm"
   ],
   "engines": {
     "python": ">=3.11"
@@ -22,7 +24,14 @@
     "type": "skill",
     "entrypoint": "main.sh",
     "input": "stdin or argument",
-    "output": "RUNE-amplified XML prompt",
+    "output": "RUNE-amplified prompt",
+    "commands": {
+      "inscribe": "Show enhanced prompt only",
+      "cast": "Enhance + run prompt through LLM",
+      "validate": "Run Spinoza validation on a prompt",
+      "grimoire": "List available prompt templates",
+      "duel": "A/B compare: raw vs enhanced"
+    },
     "requires": {
       "env": ["RUNE_API_KEY"],
       "files": ["~/.secrets"],

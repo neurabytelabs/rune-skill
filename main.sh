@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # ╔══════════════════════════════════════════════════════╗
-# ║  RUNE Skill — Prompt Amplification via WAND          ║
+# ║  RUNE Skill v2.0 — Prompt Amplification via WAND    ║
 # ║  NeuraByte Labs | OpenClaw Skill                     ║
 # ╚══════════════════════════════════════════════════════╝
 #
 # Usage:
 #   echo "Write a blog post about AI" | bash main.sh
 #   bash main.sh "Write a blog post about AI"
+#   bash main.sh cast "Design a REST API"
+#   bash main.sh validate "My prompt"
+#   bash main.sh grimoire
 #   bash main.sh                  # prompts interactively
 
 set -euo pipefail
 
-RUNE_DIR="${RUNE_DIR:-/Users/mustafa/Documents/GitHub/rune}"
+RUNE_DIR="${RUNE_DIR:-$HOME/Documents/GitHub/rune}"
 WAND="$RUNE_DIR/wand.py"
 
 # ── Load secrets for API key ──────────────────────────────
@@ -23,7 +26,8 @@ fi
 # ── Validate wand.py ──────────────────────────────────────
 if [[ ! -f "$WAND" ]]; then
   echo "ERROR: wand.py not found at $WAND" >&2
-  echo "Set RUNE_DIR env var to the RUNE repo path." >&2
+  echo "Clone RUNE: git clone https://github.com/neurabytelabs/rune $RUNE_DIR" >&2
+  echo "Or set RUNE_DIR env var to your RUNE repo path." >&2
   exit 1
 fi
 
@@ -34,9 +38,20 @@ if [[ -z "${RUNE_API_KEY:-}" ]]; then
   exit 1
 fi
 
-# ── Read prompt from arg, stdin, or interactively ─────────
+# ── Determine command and prompt ──────────────────────────
+KNOWN_COMMANDS="cast inscribe duel grimoire test validate forge stats cost config fuse lineage swarm version"
+COMMAND="inscribe"
+PROMPT=""
+
 if [[ $# -ge 1 ]]; then
-  PROMPT="$*"
+  # Check if first arg is a known wand command
+  if echo "$KNOWN_COMMANDS" | grep -qw "$1"; then
+    COMMAND="$1"
+    shift
+    PROMPT="$*"
+  else
+    PROMPT="$*"
+  fi
 elif ! [ -t 0 ]; then
   # stdin has data (pipe or redirect)
   PROMPT="$(cat)"
@@ -45,14 +60,22 @@ else
   PROMPT="$(cat)"
 fi
 
+# ── Commands that don't need a prompt ─────────────────────
+NO_PROMPT_COMMANDS="grimoire stats cost config version"
+if echo "$NO_PROMPT_COMMANDS" | grep -qw "$COMMAND"; then
+  cd "$RUNE_DIR"
+  python3 "$WAND" "$COMMAND" 2>&1 | sed $'s/\033\[[0-9;]*m//g'
+  exit 0
+fi
+
 if [[ -z "$PROMPT" ]]; then
   echo "ERROR: No prompt provided." >&2
   exit 1
 fi
 
-# ── Invoke RUNE wand inscribe ─────────────────────────────
+# ── Invoke RUNE wand ──────────────────────────────────────
 cd "$RUNE_DIR"
 
 # Strip ANSI colors from output for clean piping
-python3 "$WAND" inscribe "$PROMPT" \
+python3 "$WAND" "$COMMAND" "$PROMPT" \
   | sed $'s/\033\[[0-9;]*m//g'
