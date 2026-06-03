@@ -1,7 +1,7 @@
 {
   "name": "rune-skill",
   "version": "2.0.0",
-  "description": "RUNE Prompt Amplification Framework v2.0 — 8-layer semantic engine with Spinoza Validator, 40+ grimoire templates, and multi-agent swarm mode for dramatically better AI responses",
+  "description": "RUNE Prompt Amplification Skill for Hermes — 8-layer semantic prompt architecture with Spinoza Validator, WAND CLI wrapper, grimoire templates, and swarm mode",
   "author": "NeuraByte Labs <mustafa@neurabytelabs.com>",
   "license": "MIT",
   "main": "main.sh",
@@ -9,18 +9,44 @@
     "rune",
     "prompt-engineering",
     "ai",
-    "openclaw",
+    "hermes",
+    "hermes-agent",
     "skill",
+    "skill-md",
     "prompt-amplification",
     "wand",
     "spinoza",
     "grimoire",
-    "swarm"
+    "swarm",
+    "openclaw"
   ],
   "engines": {
     "python": ">=3.11"
   },
-  "openclaw": {
+  "hermes": {
+    "type": "skill",
+    "name": "rune-prompt-amplification",
+    "category": "prompt-engineering",
+    "skill_file": "SKILL.md",
+    "optional_entrypoint": "main.sh",
+    "input": "Hermes user request, stdin, or shell argument",
+    "output": "RUNE-amplified prompt, Hermes operating guidance, or WAND CLI command output",
+    "commands": {
+      "inscribe": "Show enhanced prompt only",
+      "cast": "Enhance + run prompt through LLM",
+      "validate": "Run Spinoza validation on a prompt",
+      "grimoire": "List available prompt templates",
+      "duel": "A/B compare: raw vs enhanced",
+      "swarm": "Multi-agent prompt evolution"
+    },
+    "requires": {
+      "runtime": ["Hermes Agent"],
+      "optional_env": ["RUNE_API_URL", "RUNE_API_KEY", "RUNE_DIR"],
+      "optional_files": ["~/.rune/config.toml", "~/.secrets"],
+      "python": ">=3.11"
+    }
+  },
+  "legacyOpenClaw": {
     "type": "skill",
     "entrypoint": "main.sh",
     "input": "stdin or argument",
@@ -31,11 +57,6 @@
       "validate": "Run Spinoza validation on a prompt",
       "grimoire": "List available prompt templates",
       "duel": "A/B compare: raw vs enhanced"
-    },
-    "requires": {
-      "env": ["RUNE_API_KEY"],
-      "files": ["~/.secrets"],
-      "python_packages": ["requests"]
     }
   },
   "repository": {
