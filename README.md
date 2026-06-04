@@ -1,52 +1,66 @@
-# 🪄 RUNE — Prompt Amplification Skill for Hermes
+# 🪄 RUNE — Prompt Amplification for Hermes
 
-> *"Every prompt is a spell. Every spell, a decree of understanding."*
+> Every prompt is a spell. RUNE makes the spell explicit enough to survive contact with reality.
 
-RUNE transforms flat, ambiguous prompts into structured 8-layer instructions validated by Spinoza's philosophical framework. This repository packages RUNE as a **Hermes-first skill** plus a small shell wrapper for standalone WAND CLI workflows.
+RUNE is a prompt-amplification skill for **Hermes Agent**. It turns rough intent into structured operating guidance using an 8-layer prompt architecture and a Spinoza-style quality check.
 
-**v2.0 "Deus Sive Natura"** — Spinoza Validator, 40+ grimoire templates, multi-agent swarm mode, Oracle feedback loops, and prompt lineage tracking.
+This repo contains:
 
-## What It Does
+- `SKILL.md` — the canonical Hermes skill.
+- `main.sh` — an optional WAND/RUNE CLI wrapper for terminal workflows.
+- `package.json` — package and Hermes metadata.
+
+OpenClaw support is kept only as **legacy compatibility**. The primary runtime is Hermes.
+
+---
+
+## What RUNE Does
+
+RUNE improves prompts and agent instructions by making the hidden structure visible:
 
 ```text
-Input:  "Write a blog post about AI"
+Input:
+  "Build me a launch plan for my agent mesh."
 
-RUNE applies 8 layers:
-  L0 → Expert role / persona
-  L1 → Domain context and target audience
-  L2 → Task definition and success criteria
-  L3 → Constraints, ethics, permission boundaries
-  L4 → Reasoning strategy
-  L5 → Tool and capability selection
-  L6 → Spinoza QA validation
-  L7 → Output format, style, length, language
+RUNE expands the request through:
+  L0  System Core        role, stance, behavioral rules
+  L1  Context Identity   domain, history, audience, constraints
+  L2  Intent Scope       goal, success criteria, output shape
+  L3  Governance         safety, ethics, permissions, non-goals
+  L4  Cognitive Engine   reasoning strategy, decomposition, critique
+  L5  Capabilities       tools, files, integrations, agents, retrieval
+  L6  QA                 Spinoza validator
+  L7  Output Meta        language, tone, structure, delivery format
 
-Output: Structured, high-quality prompt or Hermes operating guidance
+Output:
+  A clearer prompt, plan, brief, or Hermes operating pattern.
 ```
 
-Inside Hermes, the skill usually runs silently: it improves planning, coding, writing, analysis, and agent prompts without forcing the user to read the whole layer stack. If the user asks for visible RUNE mode, show the layers compactly.
+Inside Hermes, RUNE should usually run **silently**: it strengthens complex planning, writing, coding, debugging, and agent-design tasks without forcing the user to read every layer. If the user asks for visible RUNE mode, show the compact layer breakdown.
 
-## The 8 Layers
+---
 
-| Layer | Name | Purpose |
-|-------|------|---------|
-| L0 | System Core | Role, persona, behavioral rules |
-| L1 | Context Identity | Domain knowledge, history, target audience |
-| L2 | Intent Scope | Task definition, success criteria, output format |
-| L3 | Governance | Constraints, ethics, boundaries, non-goals |
-| L4 | Cognitive Engine | Reasoning strategy: decomposition, RCA, ToT, critique |
-| L5 | Capabilities Domain | Tools, integrations, files, agents, retrieval |
-| L6 | QA | Spinoza Validator — quality control |
-| L7 | Output Meta | Format, style, length, language |
+## When to Use It
 
-## v2.0 Features
+Use RUNE for:
 
-- **Spinoza Validator** — Conatus (agency), Ratio (logic), Laetitia (clarity), Natura (flow)
-- **40+ Grimoire Templates** — coding, writing, analysis, creative, AI/ML
-- **WAND CLI** — `cast`, `inscribe`, `duel`, `grimoire`, `validate`, `forge`, `swarm`, `lineage`, and more
-- **Swarm Mode** — multi-agent prompt evolution with tournament selection
-- **Oracle Engine** — self-improving prompts with feedback loops
-- **Prompt Lineage** — ancestry and evolution history
+- prompt amplification and prompt repair;
+- implementation plans and architecture briefs;
+- debugging and root-cause analysis prompts;
+- code-review briefs and subagent instructions;
+- cron prompts, mesh coordination, and autonomous-agent task design;
+- strategic writing, product narratives, and research synthesis.
+
+Do **not** overuse it for:
+
+- greetings;
+- one-line factual answers;
+- simple terminal or file operations;
+- cases where the user explicitly wants raw output.
+
+RUNE is a clarity amplifier, not ceremonial fog. Fog already has enough market share.
+
+---
 
 ## Install for Hermes
 
@@ -60,27 +74,22 @@ cp SKILL.md ~/.hermes/skills/prompt-engineering/rune-prompt-amplification/SKILL.
 Start a fresh Hermes session and load the skill:
 
 ```bash
-hermes chat -s prompt-engineering/rune-prompt-amplification -q "RUNE this into a launch plan: ship a private beta for my agent mesh"
+hermes chat -s prompt-engineering/rune-prompt-amplification \
+  -q "RUNE this into a launch plan: ship a private beta for my agent mesh"
 ```
 
-> Note: the current Hermes session may not see a newly copied skill until a new session starts.
+Notes:
 
-## Requirements
+- New skills may require a fresh Hermes session before they appear.
+- Use the full categorized path `prompt-engineering/rune-prompt-amplification` to avoid name collisions with other RUNE-related skills.
 
-For Hermes skill loading:
+---
 
-- Hermes Agent installed
-- `SKILL.md` copied into `~/.hermes/skills/...`
+## Optional WAND CLI Setup
 
-For the optional WAND CLI wrapper:
+Hermes only needs `SKILL.md`. The CLI wrapper needs either the local RUNE source tree or an installed `wand` command.
 
-- Python 3.11+
-- RUNE repo cloned locally or `wand` installed
-- Provider configured through `~/.rune/config.toml` or environment variables
-
-## Setup WAND CLI
-
-### Option A — local source install
+### Option A — local source
 
 ```bash
 git clone https://github.com/neurabytelabs/rune ~/Documents/GitHub/rune
@@ -88,15 +97,17 @@ cd ~/Documents/GitHub/rune
 python3 -m pip install -e .
 ```
 
-### Option B — package install when available
+### Option B — package install, when available
 
 ```bash
 python3 -m pip install rune-wand
 ```
 
-### Provider config
+### Provider configuration
 
-RUNE uses an OpenAI-compatible endpoint. Do not commit real keys.
+RUNE reads provider settings from environment variables and/or `~/.rune/config.toml`.
+
+Never commit real keys.
 
 ```bash
 mkdir -p ~/.rune
@@ -114,18 +125,21 @@ Environment variables also work:
 ```bash
 export RUNE_API_URL="https://your-openai-compatible-endpoint/v1/chat/completions"
 export RUNE_API_KEY="your-api-key"
+export RUNE_DIR="$HOME/Documents/GitHub/rune"
 ```
 
-`main.sh` still sources `~/.secrets` when present for backwards compatibility, but new setups should prefer explicit env vars or `~/.rune/config.toml`.
+`main.sh` still sources `~/.secrets` when present for backwards compatibility, but new setups should prefer explicit environment variables or `~/.rune/config.toml`.
 
-## Usage
+---
+
+## CLI Usage
 
 ```bash
-# Enhance a prompt; default command is inscribe
+# Default command: inscribe / enhance prompt only
 echo "Explain quantum computing" | bash main.sh
 bash main.sh "Write a marketing email for my SaaS"
 
-# Specific WAND commands
+# Explicit WAND commands
 bash main.sh cast "Design a REST API for a todo app"
 bash main.sh validate "Check this prompt quality"
 bash main.sh duel "Compare sorting algorithms"
@@ -133,43 +147,114 @@ bash main.sh grimoire
 bash main.sh version
 bash main.sh swarm "Evolve the best coding prompt"
 
-# Pipe enhanced prompt into another CLI
+# Pipe an enhanced prompt into another CLI
 ENHANCED=$(echo "Analyze this code" | bash main.sh)
 echo "$ENHANCED" | llm -m claude-3.5-sonnet
 ```
 
-## Research Workspaces
+---
 
-- `research/vc-ai-startup-scout-skill/` — David × Mustafa RUNE lab for shaping a reusable AI/VC market-intelligence skill from Voicenotes, Gemini 3.5 Flash validation, NotebookLM podcast rehearsal, optional guarded MiroFish synthetic preflight, and an English David-facing `dashboard.html` decision surface for the future private proof-of-concept repo.
+## RUNE Patterns for Hermes
+
+### Planning
+
+```text
+Apply RUNE internally. Produce a concrete plan with assumptions, ordered steps, likely files, validation, risks, and open questions. Do not implement yet.
+```
+
+### Coding
+
+```text
+Apply RUNE for architecture-first implementation. Inspect before editing, preserve user changes, implement in controlled steps, run tests, and report real tool output.
+```
+
+### Debugging
+
+```text
+Apply RUNE with systematic root-cause analysis. Reproduce, isolate, hypothesize, test, fix narrowly, and verify the actual failure path is gone.
+```
+
+### Agent / Cron Prompt Design
+
+```text
+Apply RUNE to make this autonomous prompt self-contained: role, context, trigger, permissions, tools, stop conditions, output format, and failure reporting.
+```
+
+---
+
+## Spinoza Validator
+
+Before final output, check:
+
+- **Conatus** — Does this increase the user's ability to act?
+- **Ratio** — Is it coherent, grounded, and internally consistent?
+- **Laetitia** — Is it clarifying rather than muddy?
+- **Natura** — Does it feel natural and usable, not overengineered?
+
+If one fails, revise before answering.
+
+---
+
+## Verification
+
+After changing this repo, run:
+
+```bash
+bash -n main.sh
+bash main.sh version
+bash main.sh grimoire
+bash main.sh validate "Test prompt quality"
+```
+
+For Hermes live loading:
+
+```bash
+hermes chat -s prompt-engineering/rune-prompt-amplification \
+  -q "Sadece şu metni döndür: RUNE live check OK"
+```
+
+Expected result: Hermes loads the skill and returns the requested check text.
+
+---
+
+## Repo Hygiene
+
+Keep this repo focused on the reusable skill package.
+
+Do not commit:
+
+- local Hermes workspace state such as `.hermes/`;
+- temporary research folders;
+- generated outputs, logs, caches, or local credentials;
+- real API keys from `~/.secrets`, `~/.rune/config.toml`, `.env`, or Hermes config files.
+
+If research becomes durable product knowledge, move it into its own repo or a deliberate `docs/` path before linking it from this README.
+
+---
 
 ## Legacy OpenClaw Compatibility
 
-This repository used to be positioned as **RUNE — Prompt Amplification Skill for OpenClaw** and still keeps `main.sh` compatible with executable-skill style workflows where practical.
+This repository was originally positioned as **RUNE — Prompt Amplification Skill for OpenClaw**. `main.sh` remains compatible with executable-skill style workflows where practical.
 
-The primary target is now Hermes:
+The canonical path is now:
 
-- Hermes loads `SKILL.md` as durable agent context.
-- `main.sh` remains a terminal wrapper around WAND.
-- OpenClaw references should be treated as legacy compatibility, not the canonical install path.
+1. Hermes loads `SKILL.md` as skill context.
+2. `main.sh` remains an optional WAND CLI bridge.
+3. OpenClaw references stay legacy, not the center of gravity.
 
-## Why RUNE?
+---
 
-Most people give AI flat prompts and get mediocre output. RUNE applies prompt architecture automatically: role, context, intent, constraints, reasoning mode, capabilities, QA, and output shape.
+## Related
 
-Built on Spinoza's conatus frame by NeuraByte Labs: increase clarity, preserve agency, and turn vague intent into usable structure.
+- **RUNE Framework** — https://github.com/neurabytelabs/rune
+- **RUNE Playground** — https://github.com/neurabytelabs/rune-playground
+- **Hermes Agent Docs** — https://hermes-agent.nousresearch.com/docs/
 
-> *"The more an action follows from the nature of the understanding agent, the more perfect it is."*
-> — Baruch Spinoza, Ethics IV
+---
 
 ## Author
 
 [Mustafa Saraç](https://mustafasarac.com) · [NeuraByte Labs](https://neurabytelabs.com)
-
-## Related
-
-- **RUNE Framework** → [github.com/neurabytelabs/rune](https://github.com/neurabytelabs/rune) — Core engine and WAND CLI
-- **RUNE Playground** → [github.com/neurabytelabs/rune-playground](https://github.com/neurabytelabs/rune-playground) — Browser demo
-- **Hermes Agent** → [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/docs/) — Agent runtime and skill system
 
 ## License
 
