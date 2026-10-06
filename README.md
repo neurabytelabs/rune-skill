@@ -1,8 +1,8 @@
-# 🪄 RUNE — Prompt Amplification for Hermes
+# RUNE — Prompt Amplification for Hermes
 
-> Every prompt is a spell. RUNE makes the spell explicit enough to survive contact with reality.
+RUNE is a prompt-amplification skill for **Hermes Agent**. It restructures a rough request into an 8-layer prompt and runs a Spinoza-style checklist over it.
 
-RUNE is a prompt-amplification skill for **Hermes Agent**. It turns rough intent into structured operating guidance using an 8-layer prompt architecture and a Spinoza-style quality check.
+**Measured result: it does not reliably make answers better.** In a blind pairwise A/B pilot (50 pairs, 2 Gemini models), amplified prompts were preferred in 19.6% of decided pairs, so they lost. The pilot covers only those prompts and models. Read the method and limits in [RUNE docs/BENCHMARKS.md](https://github.com/neurabytelabs/rune/blob/main/docs/BENCHMARKS.md). Use this skill to make the structure of a request explicit, not as a quality booster.
 
 This repo contains:
 
@@ -16,7 +16,7 @@ OpenClaw support is kept only as **legacy compatibility**. The primary runtime i
 
 ## What RUNE Does
 
-RUNE improves prompts and agent instructions by making the hidden structure visible:
+RUNE makes the hidden structure of a prompt or agent instruction visible:
 
 ```text
 Input:
