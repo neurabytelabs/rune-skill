@@ -2,7 +2,7 @@
 
 RUNE is a prompt-amplification skill for **Hermes Agent**. It restructures a rough request into an 8-layer prompt and runs a Spinoza-style checklist over it.
 
-**Measured result: it does not reliably make answers better.** In a blind pairwise A/B pilot (50 pairs, 2 Gemini models), amplified prompts were preferred in 19.6% of decided pairs, so they lost. The pilot covers only those prompts and models. Read the method and limits in [RUNE docs/BENCHMARKS.md](https://github.com/neurabytelabs/rune/blob/main/docs/BENCHMARKS.md). Use this skill to make the structure of a request explicit, not as a quality booster.
+**Measured result: in our blind pilot (50 pairs, 2 Gemini models) it did not make answers better.** Amplified prompts were preferred in 19.6% of decided pairs, so they lost. The pilot covers only those prompts and models. Read the method and limits in [RUNE docs/BENCHMARKS.md](https://github.com/neurabytelabs/rune/blob/main/docs/BENCHMARKS.md). Use this skill to make the structure of a request explicit, not as a quality booster.
 
 This repo contains:
 
