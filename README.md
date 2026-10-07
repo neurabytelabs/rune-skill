@@ -147,6 +147,6 @@ bash main.sh grimoire
 
 ## License
 
-MIT, as declared in `package.json` and the `SKILL.md` frontmatter. This repository does not yet contain a `LICENSE` file.
+MIT. See [LICENSE](LICENSE).
 
 Author: [Mustafa Saraç](https://mustafasarac.com) · [NeuraByte Labs](https://neurabytelabs.com)
