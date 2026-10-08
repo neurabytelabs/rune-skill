@@ -1,113 +1,73 @@
-# RUNE — Prompt Amplification for Hermes
+# RUNE skill for Hermes
 
-RUNE is a prompt-amplification skill for **Hermes Agent**. It restructures a rough request into an 8-layer prompt and runs a Spinoza-style checklist over it.
+A Hermes Agent skill that rewrites a rough request into an explicit 8-layer prompt, plus an optional shell wrapper around the RUNE `wand` CLI.
 
-**Measured result: in our blind pilot (50 pairs, 2 Gemini models) it did not make answers better.** Amplified prompts were preferred in 19.6% of decided pairs, so they lost. The pilot covers only those prompts and models. Read the method and limits in [RUNE docs/BENCHMARKS.md](https://github.com/neurabytelabs/rune/blob/main/docs/BENCHMARKS.md). Use this skill to make the structure of a request explicit, not as a quality booster.
+[![license](https://img.shields.io/github/package-json/license/neurabytelabs/rune-skill)](#license)
+[![version](https://img.shields.io/github/package-json/v/neurabytelabs/rune-skill)](package.json)
 
-This repo contains:
+**Measured result: in our blind pilot (50 pairs, 2 Gemini models) it did not make answers better.** Amplified prompts were preferred in 19.6% of decided pairs (95% CI 10.2–29.3%, 46 decided of 50), so they lost. The pilot covers only those prompts and models. Method, per-domain results and limits are in [RUNE docs/BENCHMARKS.md](https://github.com/neurabytelabs/rune/blob/main/docs/BENCHMARKS.md).
 
-- `SKILL.md` — the canonical Hermes skill.
-- `main.sh` — an optional WAND/RUNE CLI wrapper for terminal workflows.
-- `package.json` — package and Hermes metadata.
+## Why
 
-OpenClaw support is kept only as **legacy compatibility**. The primary runtime is Hermes.
+Agent instructions often leave role, scope, permissions, stop conditions and output format implicit. This skill gives Hermes a fixed checklist for making those parts explicit, which is useful when you want to read, review or reuse the structure of a request (subagent briefs, cron prompts, plans).
 
----
+It is a structuring aid, not a quality booster. Given the pilot result above, do not expect better answers just because a prompt was amplified.
 
-## What RUNE Does
+## Quick start
 
-RUNE makes the hidden structure of a prompt or agent instruction visible:
-
-```text
-Input:
-  "Build me a launch plan for my agent mesh."
-
-RUNE expands the request through:
-  L0  System Core        role, stance, behavioral rules
-  L1  Context Identity   domain, history, audience, constraints
-  L2  Intent Scope       goal, success criteria, output shape
-  L3  Governance         safety, ethics, permissions, non-goals
-  L4  Cognitive Engine   reasoning strategy, decomposition, critique
-  L5  Capabilities       tools, files, integrations, agents, retrieval
-  L6  QA                 Spinoza validator
-  L7  Output Meta        language, tone, structure, delivery format
-
-Output:
-  A clearer prompt, plan, brief, or Hermes operating pattern.
-```
-
-Inside Hermes, RUNE should usually run **silently**: it strengthens complex planning, writing, coding, debugging, and agent-design tasks without forcing the user to read every layer. If the user asks for visible RUNE mode, show the compact layer breakdown.
-
----
-
-## When to Use It
-
-Use RUNE for:
-
-- prompt amplification and prompt repair;
-- implementation plans and architecture briefs;
-- debugging and root-cause analysis prompts;
-- code-review briefs and subagent instructions;
-- cron prompts, mesh coordination, and autonomous-agent task design;
-- strategic writing, product narratives, and research synthesis.
-
-Do **not** overuse it for:
-
-- greetings;
-- one-line factual answers;
-- simple terminal or file operations;
-- cases where the user explicitly wants raw output.
-
-RUNE is a clarity amplifier, not ceremonial fog. Fog already has enough market share.
-
----
-
-## Install for Hermes
-
-From this repository:
+Install the skill into Hermes (only `SKILL.md` is needed):
 
 ```bash
+git clone https://github.com/neurabytelabs/rune-skill
+cd rune-skill
 mkdir -p ~/.hermes/skills/prompt-engineering/rune-prompt-amplification
 cp SKILL.md ~/.hermes/skills/prompt-engineering/rune-prompt-amplification/SKILL.md
 ```
 
-Start a fresh Hermes session and load the skill:
+Start a fresh Hermes session with the skill loaded:
 
 ```bash
 hermes chat -s prompt-engineering/rune-prompt-amplification \
   -q "RUNE this into a launch plan: ship a private beta for my agent mesh"
 ```
 
-Notes:
+New skills may only appear in a new Hermes session. Use the full categorized path to avoid name collisions with other RUNE-related skills.
 
-- New skills may require a fresh Hermes session before they appear.
-- Use the full categorized path `prompt-engineering/rune-prompt-amplification` to avoid name collisions with other RUNE-related skills.
+### Optional: the `main.sh` wrapper
 
----
-
-## Optional WAND CLI Setup
-
-Hermes only needs `SKILL.md`. The CLI wrapper needs either the local RUNE source tree or an installed `wand` command.
-
-### Option A — local source
+`main.sh` calls the RUNE `wand` CLI and strips ANSI colors so its output can be piped. It uses `wand` if it is on `PATH`, otherwise `$RUNE_DIR/wand.py` (default `RUNE_DIR` is `$HOME/Documents/GitHub/rune`).
 
 ```bash
-git clone https://github.com/neurabytelabs/rune ~/Documents/GitHub/rune
-cd ~/Documents/GitHub/rune
-python3 -m pip install -e .
+git clone https://github.com/neurabytelabs/rune
+cd rune && python3 -m pip install -e .    # requires Python >= 3.11
+export RUNE_DIR="$PWD"
 ```
 
-### Option B — package install, when available
+`rune-wand` is not published on PyPI at the time of writing, so install from source.
+
+Commands that do not call a model:
 
 ```bash
-python3 -m pip install rune-wand
+bash main.sh version
+bash main.sh grimoire
 ```
 
-### Provider configuration
+Commands that call a model need a provider (see Configuration):
 
-RUNE reads provider settings from environment variables and/or `~/.rune/config.toml`.
+```bash
+echo "Explain quantum computing" | bash main.sh       # default: inscribe (show enhanced prompt only)
+bash main.sh "Write a marketing email for my SaaS"
+bash main.sh cast "Design a REST API for a todo app"  # enhance and run
+bash main.sh validate "Check this prompt quality"
+bash main.sh duel "Compare sorting algorithms"        # raw vs enhanced
+bash main.sh swarm "Evolve the best coding prompt"
+```
 
-Never commit real keys.
+The wrapper accepts these `wand` subcommands: `cast inscribe duel grimoire test validate forge stats cost config fuse bind lineage swarm version`. Any other first argument is treated as prompt text for `inscribe`.
+
+## Configuration
+
+RUNE reads provider settings from environment variables and/or `~/.rune/config.toml`. Never commit real keys.
 
 ```bash
 mkdir -p ~/.rune
@@ -120,142 +80,73 @@ timeout = 300
 EOF
 ```
 
-Environment variables also work:
+Or:
 
 ```bash
 export RUNE_API_URL="https://your-openai-compatible-endpoint/v1/chat/completions"
 export RUNE_API_KEY="your-api-key"
-export RUNE_DIR="$HOME/Documents/GitHub/rune"
 ```
 
-`main.sh` still sources `~/.secrets` when present for backwards compatibility, but new setups should prefer explicit environment variables or `~/.rune/config.toml`.
+For backwards compatibility `main.sh` also sources `~/.secrets` if that file exists. New setups should use the options above.
 
----
+## How it works
 
-## CLI Usage
-
-```bash
-# Default command: inscribe / enhance prompt only
-echo "Explain quantum computing" | bash main.sh
-bash main.sh "Write a marketing email for my SaaS"
-
-# Explicit WAND commands
-bash main.sh cast "Design a REST API for a todo app"
-bash main.sh validate "Check this prompt quality"
-bash main.sh duel "Compare sorting algorithms"
-bash main.sh grimoire
-bash main.sh version
-bash main.sh swarm "Evolve the best coding prompt"
-
-# Pipe an enhanced prompt into another CLI
-ENHANCED=$(echo "Analyze this code" | bash main.sh)
-echo "$ENHANCED" | llm -m claude-3.5-sonnet
+```mermaid
+flowchart LR
+    A[Request] --> B{Complex?}
+    B -- no --> C[Answer directly]
+    B -- yes --> D[Fill layers L0-L7]
+    D --> E[Four-point check]
+    E --> F[Answer or visible RUNE pass]
 ```
 
----
+`SKILL.md` tells Hermes to answer simple requests directly and, for complex ones, to work through eight layers internally:
 
-## RUNE Patterns for Hermes
+| Layer | Name | Covers |
+|---|---|---|
+| L0 | System Core | role, stance, behavioral rules |
+| L1 | Context Identity | domain, history, audience, constraints |
+| L2 | Intent Scope | goal, success criteria, output shape |
+| L3 | Governance | safety, permissions, non-goals |
+| L4 | Cognitive Engine | reasoning strategy, decomposition, critique |
+| L5 | Capabilities | tools, files, integrations, retrieval |
+| L6 | QA | final check (below) |
+| L7 | Output Meta | language, tone, structure, format |
 
-### Planning
+The L6 check asks four questions, named after Spinoza's terms: does the answer help the user act (Conatus), is it coherent (Ratio), is it clear (Laetitia), is it not overengineered (Natura). If one fails, the answer is revised.
 
-```text
-Apply RUNE internally. Produce a concrete plan with assumptions, ordered steps, likely files, validation, risks, and open questions. Do not implement yet.
-```
+Layers stay hidden unless the user asks for a visible "RUNE mode", in which case Hermes prints a compact L0–L7 breakdown. `SKILL.md` also contains short reusable patterns for planning, coding, debugging and cron-prompt design.
 
-### Coding
+Repository contents:
 
-```text
-Apply RUNE for architecture-first implementation. Inspect before editing, preserve user changes, implement in controlled steps, run tests, and report real tool output.
-```
+- `SKILL.md` — the Hermes skill (frontmatter + instructions).
+- `main.sh` — optional `wand` CLI wrapper.
+- `package.json` — package and Hermes metadata.
 
-### Debugging
+## Status / limits
 
-```text
-Apply RUNE with systematic root-cause analysis. Reproduce, isolate, hypothesize, test, fix narrowly, and verify the actual failure path is gone.
-```
+- The blind pilot found amplified prompts lost to raw prompts (see above). It covered one prompt set, Gemini generation models only, and a single sample per cell; it does not show how the skill behaves in Hermes on other models.
+- `SKILL.md` is instruction text; there are no automated tests in this repo.
+- `main.sh` depends on the separate [RUNE](https://github.com/neurabytelabs/rune) repo, which is not on PyPI.
+- Declared platforms in `SKILL.md`: macOS and Linux.
+- OpenClaw support is legacy: `main.sh` still works as an executable-style skill, but Hermes is the primary target.
 
-### Agent / Cron Prompt Design
-
-```text
-Apply RUNE to make this autonomous prompt self-contained: role, context, trigger, permissions, tools, stop conditions, output format, and failure reporting.
-```
-
----
-
-## Spinoza Validator
-
-Before final output, check:
-
-- **Conatus** — Does this increase the user's ability to act?
-- **Ratio** — Is it coherent, grounded, and internally consistent?
-- **Laetitia** — Is it clarifying rather than muddy?
-- **Natura** — Does it feel natural and usable, not overengineered?
-
-If one fails, revise before answering.
-
----
-
-## Verification
-
-After changing this repo, run:
+To check changes to this repo:
 
 ```bash
 bash -n main.sh
 bash main.sh version
 bash main.sh grimoire
-bash main.sh validate "Test prompt quality"
 ```
-
-For Hermes live loading:
-
-```bash
-hermes chat -s prompt-engineering/rune-prompt-amplification \
-  -q "Sadece şu metni döndür: RUNE live check OK"
-```
-
-Expected result: Hermes loads the skill and returns the requested check text.
-
----
-
-## Repo Hygiene
-
-Keep this repo focused on the reusable skill package.
-
-Do not commit:
-
-- local Hermes workspace state such as `.hermes/`;
-- temporary research folders;
-- generated outputs, logs, caches, or local credentials;
-- real API keys from `~/.secrets`, `~/.rune/config.toml`, `.env`, or Hermes config files.
-
-If research becomes durable product knowledge, move it into its own repo or a deliberate `docs/` path before linking it from this README.
-
----
-
-## Legacy OpenClaw Compatibility
-
-This repository was originally positioned as **RUNE — Prompt Amplification Skill for OpenClaw**. `main.sh` remains compatible with executable-skill style workflows where practical.
-
-The canonical path is now:
-
-1. Hermes loads `SKILL.md` as skill context.
-2. `main.sh` remains an optional WAND CLI bridge.
-3. OpenClaw references stay legacy, not the center of gravity.
-
----
 
 ## Related
 
-- **RUNE Framework** — https://github.com/neurabytelabs/rune
-- **RUNE Playground** — https://github.com/neurabytelabs/rune-playground
-- **Hermes Agent Docs** — https://hermes-agent.nousresearch.com/docs/
-
----
-
-## Author
-
-[Mustafa Saraç](https://mustafasarac.com) · [NeuraByte Labs](https://neurabytelabs.com)
+- [RUNE framework](https://github.com/neurabytelabs/rune) — the `wand` CLI and the benchmark harness
+- [RUNE Playground](https://github.com/neurabytelabs/rune-playground)
+- [Hermes Agent docs](https://hermes-agent.nousresearch.com/docs/)
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).
+
+Author: [Mustafa Saraç](https://mustafasarac.com) · [NeuraByte Labs](https://neurabytelabs.com)
